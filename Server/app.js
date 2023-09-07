@@ -85,7 +85,7 @@ app.delete("/mountains/:id", (req, res) => {
 
 
 const PORT = 8080;
-app.listen(PORT, (error) => {
+app.listen(process.env.PORT || PORT, (error) => {
     if (error) {
         console.log("Error starting the server: " + error);
         return;
