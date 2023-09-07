@@ -3,7 +3,7 @@
         "express": "4.18.2"
     },
     "scripts": {
-        "vercel-build": "npm install",
+        "vercel-build": "npm install && node app.js",
         "test": "echo \"Error: No test specified\" && exit 1",
         "start": "node app.js"
     },
