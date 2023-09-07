@@ -84,11 +84,16 @@ app.delete("/mountains/:id", (req, res) => {
 });
 
 
-const PORT = 8080;
-app.listen(process.env.PORT || PORT, (error) => {
+const DEV_PORT = 8080;
+app.listen(process.env.PORT || DEV_PORT, (error) => {
     if (error) {
         console.log("Error starting the server: " + error);
         return;
     }
-    console.log("Server is running on port: " + PORT);
+    if (process.env.PORT !== undefined) {
+        console.log("Live server is running on port: " + process.env.PORT);
+    }
+    else {
+        console.log("Server is running on port: " + DEV_PORT);
+    }
 });
