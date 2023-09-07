@@ -7,6 +7,6 @@
         "start": "node app.js"
     },
     "engines": {
-        "node": "14.x"
+        "node": "18.x"
     }
 }
