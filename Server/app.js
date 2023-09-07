@@ -1,50 +1,94 @@
 const express = require("express");
+
 const app = express();
 
-const mountains = ["K2", "Mt. Everest", "Kilimanjaro"];
+app.use(express.json());
+
+const mountains = [
+    { id: 1, name: "K2", height: 4675 },
+    { id: 2, name: "Mt. Everest", height: 6162 },
+    { id: 3, name: "Kilimanjaro", height: 5895 }
+];
 
 app.get("/", (req, res) => {
-    res.send(`<h1>Mountains of the world!<h1>
-    <a href="/mountains">All mountains</a>`);
+    res.sendFile(__dirname + "/public/home.html");
 });
 
 app.get("/mountains", (req, res) => {
-    res.send(mountains);
+    res.send({ data: mountains });
 });
 
 app.get("/mountains/:id", (req, res) => {
-    if (mountains[parseInt(req.params.id)] === undefined) {
-        res.send(`<p><b>No mountain found with id</b>: ${req.params.id}</p>`);
-    } else {
-        res.send(`<p><b>Found mountain</b>: ${mountains[parseInt(req.params.id)]}</p>`);
+    const paramsMountainId = Number(req.params.id);
+    if (!paramsMountainId) {
+        res.send({ error: "The mountain id must be a number!" });
+        return;
     }
+    const foundMountain = mountains.find((mountain) => mountain.id === paramsMountainId);
+    res.send({ data: foundMountain });
 });
 
 app.post("/mountains", (req, res) => {
-    res.send(res);
+    mountains.push(req.body)
+    res.send(req.body);
 });
 
-// needs security
-app.patch("/mountains/:id", (req, res) => {
-    res.send(res);
-});
-
-// needs security
 app.put("/mountains/:id", (req, res) => {
-    res.send(res);
+    const paramsMountainId = Number(req.params.id);
+    if (!paramsMountainId) {
+        res.send({ error: "The mountain id must be a number!" });
+        return;
+    }
+    const updatedData = req.body;
+    const foundMountain = mountains.find((mountain) => mountain.id === paramsMountainId);
+    if (!foundMountain) {
+        return res.status(404).send("Mountain not found!");
+    }
+    foundMountain.name = updatedData.name;
+    foundMountain.height = updatedData.height;
+    res.send(foundMountain);
 });
 
-// needs security
+app.patch("/mountains/:id", (req, res) => {
+    const paramsMountainId = Number(req.params.id);
+    if (!paramsMountainId) {
+        res.send({ error: "The mountain id must be a number!" });
+        return;
+    }
+    const updatedData = req.body;
+    const foundMountain = mountains.find((mountain) => mountain.id === paramsMountainId);
+    if (!foundMountain) {
+        return res.status(404).send("Mountain not found!");
+    }
+    if (updatedData.name !== undefined) {
+        foundMountain.name = updatedData.name;
+    }
+    if (updatedData.height !== undefined) {
+        foundMountain.height = updatedData.height;
+    }
+    res.send(foundMountain);
+});
+
 app.delete("/mountains/:id", (req, res) => {
-    res.send(res);
+    const paramsMountainId = Number(req.params.id);
+    if (!paramsMountainId) {
+        res.send({ error: "The mountain id must be a number!" });
+        return;
+    }
+    const mountainIndex = mountains.findIndex((mountain) => mountain.id === paramsMountainId);
+    if (mountainIndex === -1) {
+        return res.status(404).send("Mountain not found!");
+    }
+    const deletedMountain = mountains.splice(mountainIndex, 1).pop();
+    res.send(deletedMountain);
 });
 
-function latifCalc(balance, amount) {
-    // en lille joke med en unødvendig beregning fordi du mente 
-    // at en hæveautomat fjerner et beløb fra en konto og lægger det til igen,
-    // hvis ikke beløbet et tilgængeligt på kontoen, når man prøver at hæve et beløb ;-)
-    balance - amount;
-    return balance + amount;
-}
 
-app.listen(8080);
+const PORT = 8080;
+app.listen(PORT, (error) => {
+    if (error) {
+        console.log("Error starting the server: " + error);
+        return;
+    }
+    console.log("Server is running on port: " + PORT);
+});
