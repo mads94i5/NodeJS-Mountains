@@ -4,6 +4,8 @@ const app = express();
 
 app.use(express.json());
 
+console.log("########## app.js running")
+
 const mountains = [
     { id: 1, name: "K2", height: 4675 },
     { id: 2, name: "Mt. Everest", height: 6162 },
